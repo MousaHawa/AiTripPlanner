@@ -3,7 +3,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../types/navigation";
 import AppButton from "../components/ui/AppButton";
 import { Colors } from "../constants/colors";
-
+import { logoutUser } from "../services/authService";
 type Props = {
   navigation: StackNavigationProp<RootStackParamList, "ProfileScreen">;
 };
@@ -32,10 +32,17 @@ export default function ProfileScreen({ navigation }: Props) {
       />
 
       <AppButton
-        title="Logout"
-        variant="outline"
-        onPress={() => navigation.replace("WelcomeScreen")}
-      />
+  title="Logout"
+  variant="outline"
+  onPress={async () => {
+    await logoutUser();
+
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "WelcomeScreen" }],
+    });
+  }}
+/>
     </View>
   );
 }

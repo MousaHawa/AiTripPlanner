@@ -1,31 +1,59 @@
 import { useState } from "react";
-import { View, Text, StyleSheet, Pressable, Alert } from "react-native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "../types/navigation";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  Alert,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import AppButton from "../components/ui/AppButton";
 import AppInput from "../components/ui/AppInput";
 import { Colors } from "../constants/colors";
+import { resetPassword } from "../services/authService";
 
 type Props = {
-  navigation: StackNavigationProp<RootStackParamList, "ForgotPasswordScreen">;
+  navigation: any;
 };
 
 export default function ForgotPasswordScreen({ navigation }: Props) {
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  function handleReset() {
-    if (!email) {
+  async function handleReset() {
+    if (!email.trim()) {
       Alert.alert("Missing email", "Please enter your email.");
       return;
     }
 
-    Alert.alert("Reset link sent", "Check your email for reset instructions.");
-    navigation.goBack();
+    try {
+      setLoading(true);
+      await resetPassword(email);
+      Alert.alert("Reset link sent", "Check your email for reset instructions.");
+      navigation.goBack();
+    } catch (error: any) {
+      console.log("Reset password error:", error);
+
+      let message = "Something went wrong. Please try again.";
+
+      if (error.code === "auth/invalid-email") {
+        message = "The email address is not valid.";
+      }
+
+      Alert.alert("Reset failed", message);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
-    <View style={styles.container}>
-      <Pressable onPress={() => navigation.goBack()}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+    >
+      <Pressable onPress={() => navigation.goBack()} disabled={loading}>
         <Text style={styles.back}>← Back</Text>
       </Pressable>
 
@@ -42,10 +70,17 @@ export default function ForgotPasswordScreen({ navigation }: Props) {
         keyboardType="email-address"
         value={email}
         onChangeText={setEmail}
+        editable={!loading}
       />
 
-      <AppButton title="Send Reset Link" onPress={handleReset} />
-    </View>
+      {loading ? (
+        <View style={styles.loadingButton}>
+          <ActivityIndicator color="#FFFFFF" />
+        </View>
+      ) : (
+        <AppButton title="Send Reset Link" onPress={handleReset} />
+      )}
+    </KeyboardAvoidingView>
   );
 }
 
@@ -75,5 +110,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: Colors.muted,
     lineHeight: 24,
+  },
+  loadingButton: {
+    width: "100%",
+    paddingVertical: 16,
+    borderRadius: 18,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: Colors.primary,
   },
 });
