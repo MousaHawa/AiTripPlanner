@@ -56,13 +56,18 @@ export default function SignupScreen({ navigation }: Props) {
       return;
     }
 
-    const fullName = `${firstName.trim()} ${lastName.trim()}`;
-
     try {
-      setLoading(true);
-      await signupWithEmail(fullName, email, password);
-      navigation.replace("MainTabs");
-    } catch (error: any) {
+  setLoading(true);
+
+  await signupWithEmail(
+    firstName,
+    lastName,
+    email,
+    password
+  );
+
+  navigation.replace("MainTabs");
+}catch (error: any) {
       console.log("Signup error:", error);
 
       let message = "Something went wrong. Please try again.";

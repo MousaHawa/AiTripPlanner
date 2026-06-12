@@ -1,5 +1,3 @@
-// services/authService.ts
-
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -7,32 +5,48 @@ import {
   updateProfile,
   signOut,
 } from "firebase/auth";
-import { auth } from "./firebase";
+
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+
+import { auth, db } from "./firebase";
 
 export async function signupWithEmail(
-  fullName: string,
+  firstName: string,
+  lastName: string,
   email: string,
   password: string
 ) {
+  const cleanFirstName = firstName.trim();
+  const cleanLastName = lastName.trim();
+  const cleanEmail = email.trim().toLowerCase();
+
   const userCredential = await createUserWithEmailAndPassword(
     auth,
-    email.trim(),
+    cleanEmail,
     password
   );
 
-  if (auth.currentUser) {
-    await updateProfile(auth.currentUser, {
-      displayName: fullName.trim(),
-    });
-  }
+  const user = userCredential.user;
 
-  return userCredential.user;
+  await updateProfile(user, {
+    displayName: `${cleanFirstName} ${cleanLastName}`,
+  });
+
+  await setDoc(doc(db, "users", user.uid), {
+    uid: user.uid,
+    firstName: cleanFirstName,
+    lastName: cleanLastName,
+    email: cleanEmail,
+    createdAt: serverTimestamp(),
+  });
+
+  return user;
 }
 
 export async function loginWithEmail(email: string, password: string) {
   const userCredential = await signInWithEmailAndPassword(
     auth,
-    email.trim(),
+    email.trim().toLowerCase(),
     password
   );
 
@@ -40,7 +54,7 @@ export async function loginWithEmail(email: string, password: string) {
 }
 
 export async function resetPassword(email: string) {
-  await sendPasswordResetEmail(auth, email.trim());
+  await sendPasswordResetEmail(auth, email.trim().toLowerCase());
 }
 
 export async function logoutUser() {
