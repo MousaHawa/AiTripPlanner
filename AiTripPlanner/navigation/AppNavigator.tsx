@@ -6,6 +6,7 @@ import WelcomeScreen from "../screens/WelcomeScreen";
 import LoginScreen from "../screens/LoginScreen";
 import SignupScreen from "../screens/SignUpScreen";
 import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
+import ExploreScreen from "../screens/ExploreScreen";
 
 import BottomTabs from "./BottomTabs";
 
@@ -16,6 +17,8 @@ import BudgetScreen from "../screens/BudgetScreen";
 import InterestsScreen from "../screens/InterestsScreen";
 import ReviewTripScreen from "../screens/ReviewTripScreen";
 import TripDetailsScreen from "../screens/TripDetailsScreen";
+import TripsScreen from "../screens/TripsScreen";
+import ProfileScreen from "../screens/ProfileScreen";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -39,6 +42,9 @@ export default function AppNavigator() {
       <Stack.Screen name="InterestsScreen" component={InterestsScreen} />
       <Stack.Screen name="ReviewTripScreen" component={ReviewTripScreen} />
       <Stack.Screen name="TripDetailsScreen" component={TripDetailsScreen} />
+      <Stack.Screen name="ExploreScreen" component={ExploreScreen} options={{ headerShown: false }}/>
+      <Stack.Screen name="TripsScreen" component={TripsScreen} />
+      <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
     </Stack.Navigator>
   );
 }

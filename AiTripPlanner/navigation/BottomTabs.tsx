@@ -1,42 +1,60 @@
 import React from "react";
+import { View } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 
 import { BottomTabParamList } from "../types/navigation";
-import { Colors } from "../constants/colors";
 
-import ExploreScreen from "../screens/ExploreScreen";
+import HomeScreen from "../screens/HomeScreen";
 import WishlistScreen from "../screens/WishlistScreen";
 import TripsScreen from "../screens/TripsScreen";
 import ProfileScreen from "../screens/ProfileScreen";
+import ExploreScreen from "../screens/ExploreScreen";
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();
 
 export default function BottomTabs() {
   return (
     <Tab.Navigator
-      initialRouteName="ExploreTab"
+      initialRouteName="HomeTab"
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarActiveTintColor: Colors.primary,
-        tabBarInactiveTintColor: Colors.muted,
+
+        tabBarActiveTintColor: "#FDE68A",
+        tabBarInactiveTintColor: "#C4B5FD",
+
         tabBarStyle: {
-          height: 82,
-          paddingTop: 8,
+          height: 84,
+          paddingTop: 10,
           paddingBottom: 18,
-          backgroundColor: "#FFFFFF",
-          borderTopWidth: 1,
-          borderTopColor: Colors.border,
+          marginHorizontal: 18,
+          marginBottom: 18,
+          borderRadius: 28,
+          position: "absolute",
+          backgroundColor: "rgba(30, 27, 75, 0.92)",
+          borderTopWidth: 0,
+          borderWidth: 1,
+          borderColor: "rgba(255,255,255,0.18)",
+          shadowColor: "#000",
+          shadowOpacity: 0.25,
+          shadowRadius: 18,
+          shadowOffset: {
+            width: 0,
+            height: 8,
+          },
+          elevation: 10,
         },
+
         tabBarLabelStyle: {
           fontSize: 12,
-          fontWeight: "700",
+          fontWeight: "900",
         },
-        tabBarIcon: ({ color, size, focused }) => {
+
+        tabBarIcon: ({ color, focused }) => {
           let iconName: keyof typeof Ionicons.glyphMap = "compass-outline";
 
           if (route.name === "ExploreTab") {
-            iconName = focused ? "compass" : "compass-outline";
+            iconName = focused ? "home" : "home-outline";
           }
 
           if (route.name === "WishlistTab") {
@@ -51,14 +69,37 @@ export default function BottomTabs() {
             iconName = focused ? "person" : "person-outline";
           }
 
-          return <Ionicons name={iconName} size={size} color={color} />;
+          return (
+            <View
+              style={{
+                width: 42,
+                height: 42,
+                borderRadius: 21,
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: focused
+                  ? "rgba(253, 230, 138, 0.16)"
+                  : "transparent",
+                borderWidth: focused ? 1 : 0,
+                borderColor: focused
+                  ? "rgba(253, 230, 138, 0.35)"
+                  : "transparent",
+              }}
+            >
+              <Ionicons
+                name={iconName}
+                size={focused ? 25 : 22}
+                color={color}
+              />
+            </View>
+          );
         },
       })}
     >
       <Tab.Screen
-        name="ExploreTab"
-        component={ExploreScreen}
-        options={{ title: "Explore" }}
+        name="HomeTab"
+        component={HomeScreen}
+        options={{ title: "Home" }}
       />
 
       <Tab.Screen
